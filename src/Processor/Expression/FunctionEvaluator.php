@@ -106,6 +106,8 @@ final class FunctionEvaluator
                 return self::sqlInetAton($conn, $scope, $expr, $row, $result);
             case 'INET_NTOA':
                 return self::sqlInetNtoa($conn, $scope, $expr, $row, $result);
+            case 'LTRIM':
+                return self::sqlLtrim($conn, $scope, $expr, $row, $result);
         }
 
         throw new ProcessorException("Function " . $expr->functionName . " not implemented yet");
@@ -1375,6 +1377,25 @@ final class FunctionEvaluator
         }
 
         return long2ip((int)$subject);
+    }
+
+    private static function sqlLtrim(
+        FakePdoInterface $conn,
+        Scope $scope,
+        FunctionExpression $expr,
+        array $row,
+        QueryResult $result
+    ) : string {
+
+        $args = $expr->args;
+
+        if (\count($args) !== 1) {
+            throw new ProcessorException("MySQL LTRIM() must be called with one argument");
+        }
+
+        $column = Evaluator::evaluate($conn, $scope, $args[0], $row, $result);
+
+        return ltrim($column);
     }
 
     private static function getPhpIntervalFromExpression(
