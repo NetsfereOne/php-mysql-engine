@@ -374,6 +374,8 @@ final class CreateTableParser
                 return;
             case 'CHECK':
                 return;
+            case 'FOREIGN KEY':
+                return;
         }
 
         $fields[] = static::parseField($tokens);
